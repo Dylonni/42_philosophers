@@ -32,8 +32,9 @@ long	get_time(void)
 	return ((timeval.tv_sec * 1000) + (timeval.tv_usec / 1000));
 }
 
-/*Thread that will watch on each philosopher. Once a philosopher dies,
-monitor will switch a value, allowing all the threads and the program to stop*/
+/*Thread that will watch on each philosopher. Once a philosopher dies or
+once each philosophers ate the right amount of meals, the monitor will
+switch a value, allowing all the threads and the program to stop*/
 void	*monitor(void *arg)
 {
 	t_philo			*philos;
