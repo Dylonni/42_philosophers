@@ -10,45 +10,52 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRC_MAIN		=	src/main.c \
-					src/checks.c \
-					src/tools.c \
-					src/monitor.c \
-					src/routine.c \
-					src/free.c \
-					src/mutex_actions.c \
+SRC_MAIN	=	src/main.c \
+			src/checks.c \
+			src/tools.c \
+			src/monitor.c \
+			src/routine.c \
+			src/free.c \
+			src/mutex_actions.c \
 					
 
-SRCS			= ${SRC_MAIN}
+SRCS        = ${SRC_MAIN}
+OBJ_DIR     = objs
+OBJS        = $(patsubst src/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 
-
-OBJ				= $(SRCS:.c=.o)
-
-CC				= cc
-RM				= rm -f
-CFLAGS			= -Wall -Wextra -Werror
+CC		= cc
+RM		= rm -f
+CFLAGS		= -Wall -Wextra -Werror
 
 NAME            = philo
 
-all:			$(NAME)
+all: $(OBJ_DIR) $(OBJS) $(NAME)
 
-$(NAME): 		$(OBJ)
-				@echo "\033[1;35m\n                              ⌛️Compiling files...\033[0m"
-				$(CC) $(OBJ) $(CFLAGS) -o $(NAME)
-				@echo "\033[32;1m\n                     Project has compiled successfully! ✅ \033[0m"
-				@echo "\033[32;1m\n 💾 Executable './$(NAME)' has been created in: \n    └─ 📂 \033[4;36m ~ $(PWD)\033[0m"
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
+
+$(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
+	@mkdir -p $(@D)
+	@printf '\033[A\033[19C'"⌛ [\e[1;96mCompiling\033[0m]\033[35m $<\033[0m \n"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(NAME): $(OBJS)
+	@$(CC) $(OBJS) $(CFLAGS) -o $(NAME)
+	@printf '\033[A\033[20C'"\033[32;1m  ✅ Project has compiled successfully!          \033[0m"
+	@printf "\n\n    [🏳️ FLAGS: \033[0;35m$(CFLAGS)\033[0m]"
+	@echo "\033[32;1m\n 💾 Executable \e[7m./$(NAME)\e[27m has been created in: \n    └─ 📂 \033[4;36m ~ $(PWD)\033[0m"
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) -r $(OBJ_DIR)
 
 fclean:
-	@echo "\033[1;33m\n                        [Cleaning directories with \033[0;36mfclean\033[1;33m]\n\033[0m"
+	@echo "\033[1;93m\n                        [Cleaning directories with \033[0;96mfclean\033[1;93m]\n\033[0m"
 	@make clean
 	$(RM) $(NAME)
 
-re:	
+re:
 	@make fclean
-	@echo "\033[1;33m\n                            [Calling \033[0;36mmake all\033[1;33m rule]\n\033[0m"
+	@echo "\033[1;93m\n                             [Calling \033[0;96mmake all\033[1;93m rule]\n\n\033[0m"
 	@make -s all
 
-.PHONY:	all clean fclean re
+.PHONY: all clean fclean re
