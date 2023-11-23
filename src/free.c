@@ -16,7 +16,10 @@
 void	freedata(t_data *data)
 {
 	if (data->args)
+	{
 		free(data->args);
+		data->args = NULL;
+	}
 }
 
 /*This function is called upon a pthread_create failure.
